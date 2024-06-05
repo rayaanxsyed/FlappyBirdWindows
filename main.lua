@@ -34,6 +34,7 @@ local spawnTimer = 0
 
 local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
+local scrolling = true
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -69,34 +70,46 @@ function love.keyboard.wasPressed(key)
 end
 
 function love.update(dt)
-    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
-        % BACKGROUND_LOOPING_POINT
-    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
-        % VIRTUAL_WIDTH
+    if scrolling then 
+        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
+            % BACKGROUND_LOOPING_POINT
+        groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
+            % VIRTUAL_WIDTH
         
-    spawnTimer = spawnTimer + dt
+        spawnTimer = spawnTimer + dt
     
-    if spawnTimer > 2 then 
+        if spawnTimer > 2 then 
 
-        local y = math.max(-PIPE_HEIGHT + 10, 
-            math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
-        lastY = y
-        table.insert(pipePairs, PipePair(y))
-        spawnTimer = 0
-    end
+            local y = math.max(-PIPE_HEIGHT + 10, 
+                math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+            lastY = y
+            table.insert(pipePairs, PipePair(y))
+            spawnTimer = 0
+        end
 
-    bird:update(dt)
+        bird:update(dt)
 
-    for k, pair in pairs(pipePairs) do 
-        pair:update(dt)
-    end
+        for k, pair in pairs(pipePairs) do 
+            pair:update(dt)
+        
+            for l, pipe in pairs(pair.pipes) do 
+                if bird:collides(pipe) then
+                    scrolling = false
+                 end
+            end
 
-    for k, pair in pairs(pipePairs) do 
-        if pair.remove then 
-            table.remove(pipePairs, k)
+            if pair.x < -PIPE_WIDTH then 
+                pair.remove = true
+            end
+
+            for k, pair in pairs(pipePairs) do 
+                if pair.remove then 
+                    table.remove(pipePairs, k)
+                end
+            end
         end
     end
-
+ 
     love.keyboard.keysPressed = {}
 end
       
