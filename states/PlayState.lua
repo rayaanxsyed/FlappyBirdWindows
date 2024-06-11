@@ -7,6 +7,9 @@ PIPE_WIDTH = 70
 BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
 
+local spawntimer = math.random(0.5,3)
+
+
 function PlayState:init()
 
     self.bird = Bird() 
@@ -18,9 +21,14 @@ function PlayState:init()
 end
 
 function PlayState:update(dt)
+
+    if love.keyboard.wasPressed('p') then
+        gStateMachine:change('pause')
+    end
+
     self.timer = self.timer + dt
     
-    if self.timer > 2 then 
+    if self.timer > spawntimer then 
 
         local y = math.max(-PIPE_HEIGHT + 10, 
             math.min(self.lastY + math.random(-20,20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))

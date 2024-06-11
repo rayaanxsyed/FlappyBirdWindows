@@ -12,6 +12,7 @@ require 'states/PlayState'
 require 'states/TitleScreenState'
 require 'states/ScoreState'
 require 'states/CountdownState'
+require 'states/PauseState'
 
 WINDOW_WIDTH = 1280 
 WINDOW_HEIGHT = 720
@@ -44,6 +45,7 @@ local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
 local scrolling = true
 
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     love.window.setTitle('Flappy Bird')
@@ -62,9 +64,8 @@ function love.load()
 
         ['music'] = love.audio.newSource('cat_mario.mp3', 'static')
     }
+ 
 
-    sounds['music']:setLooping(true)
-    sounds['music']:play()
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         vsync = true, 
@@ -76,8 +77,11 @@ function love.load()
         ['title'] = function() return TitleScreenState() end,
         ['play'] = function() return PlayState() end,
         ['score'] = function() return ScoreState() end,
-        ['countdown'] = function() return CountdownState() end
+        ['countdown'] = function() return CountdownState() end,
+        ['pause'] = function() return PauseState() end
       } 
+
+    startMusic(sounds)
 
     gStateMachine:change('title')
 
@@ -112,6 +116,7 @@ function love.update(dt)
     gStateMachine:update(dt)
         
     love.keyboard.keysPressed = {}
+
 end
       
 
@@ -125,4 +130,15 @@ function love.draw()
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
 
     push:finish()
+end
+
+function stopMusic(sounds)
+    if sounds['music']:isPlaying() then
+        sounds['music']:stop()
+    end
+end
+
+function startMusic(sounds)
+    sounds['music']:setLooping(true)
+    sounds['music']:play()
 end
