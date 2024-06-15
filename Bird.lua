@@ -1,6 +1,6 @@
 Bird = Class{}
 
-local GRAVITY = 5
+local GRAVITY = 7
 
 function Bird:init()
     self.image = love.graphics.newImage('bird.png')
@@ -24,7 +24,9 @@ function Bird:collides(pipe)
 end
 
 function Bird:render()
-    love.graphics.draw(self.image, self.x, self.y)
+    if scrolling then 
+        love.graphics.draw(self.image, self.x, self.y)
+    end 
 end
 
 function Bird:update(dt)

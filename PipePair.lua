@@ -10,7 +10,7 @@ function PipePair:init(y)
 
     self.pipes = {
         ['upper'] = Pipe('top', self.y),
-        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + math.random(GAP_HEIGHT-10, GAP_HEIGHT+10))
+        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + math.random(GAP_HEIGHT-10, GAP_HEIGHT+50))
     }
 
     self.remove = false

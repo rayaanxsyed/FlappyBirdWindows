@@ -12,7 +12,6 @@ require 'states/PlayState'
 require 'states/TitleScreenState'
 require 'states/ScoreState'
 require 'states/CountdownState'
-require 'states/PauseState'
 
 WINDOW_WIDTH = 1280 
 WINDOW_HEIGHT = 720
@@ -30,8 +29,9 @@ local GROUND_LOOPING_POINT = 514
 local backgroundScroll = 0                     
 local groundScroll = 0
 
-local BACKGROUND_SCROLL_SPEED = 30
-local GROUND_SCROLL_SPEED = 60
+
+BACKGROUND_SCROLL_SPEED = 30
+GROUND_SCROLL_SPEED = 60
 
 local bird = Bird()
 
@@ -61,7 +61,7 @@ function love.load()
         ['explosion'] = love.audio.newSource('explosion.wav', 'static'),
         ['hurt'] = love.audio.newSource('hurt.wav', 'static'),
         ['score'] = love.audio.newSource('score.wav', 'static'),
-
+        ['pause'] = love.audio.newSource('pause_effect.mp3', 'static'),
         ['music'] = love.audio.newSource('cat_mario.mp3', 'static')
     }
  
@@ -77,8 +77,7 @@ function love.load()
         ['title'] = function() return TitleScreenState() end,
         ['play'] = function() return PlayState() end,
         ['score'] = function() return ScoreState() end,
-        ['countdown'] = function() return CountdownState() end,
-        ['pause'] = function() return PauseState() end
+        ['countdown'] = function() return CountdownState() end
       } 
 
     startMusic(sounds)
@@ -130,12 +129,6 @@ function love.draw()
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
 
     push:finish()
-end
-
-function stopMusic(sounds)
-    if sounds['music']:isPlaying() then
-        sounds['music']:stop()
-    end
 end
 
 function startMusic(sounds)
